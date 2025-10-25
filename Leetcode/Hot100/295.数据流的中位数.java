@@ -6,37 +6,24 @@
 
 // @lc code=start
 class MedianFinder {
-    PriorityQueue<Integer> queMin;
-    PriorityQueue<Integer> queMax;
+    Queue<Integer> A, B;
 
     public MedianFinder() {
-        // 大顶堆，存储较小的一半
-        queMin = new PriorityQueue<Integer>((a, b) -> (b - a));
-        // 小顶堆，存储较大的一半
-        queMax = new PriorityQueue<Integer>((a, b) -> (a - b));
+        A = new PriorityQueue<>(); // 小顶堆，保存较大的一半
+        B = new PriorityQueue<>((x, y) -> (y - x)); // 大顶堆，保存较小的一半
     }
     
     public void addNum(int num) {
-        // 将数字添加到大顶堆
-        if (queMin.isEmpty() || num <= queMin.peek()) {
-            queMin.offer(num);
-            // 平衡两个堆的元素个数
-            if (queMax.size() + 1 < queMin.size()) {
-                queMax.offer(queMin.poll());
-            }
+        if (A.size() != B.size()) {
+            A.add(num);
+            B.add(A.poll());
         } else {
-            queMax.offer(num);
-            if (queMax.size() > queMin.size()) {
-                queMin.offer(queMax.poll());
-            }
+            B.add(num);
+            A.add(B.poll());
         }
     }
-    
     public double findMedian() {
-        if (queMin.size() > queMax.size()) {
-            return queMin.peek();
-        }
-        return (queMin.peek() + queMax.peek()) / 2.0;
+        return A.size() != B.size() ? A.peek() : (A.peek() + B.peek()) / 2.0;
     }
 }
 
